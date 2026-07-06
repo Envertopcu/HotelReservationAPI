@@ -1,4 +1,5 @@
 using HotelReservationAPI.Data;
+using HotelReservationAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 // DbContext kaydý
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Repository Dependency Injection
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 
 // Add services to the container.
 
