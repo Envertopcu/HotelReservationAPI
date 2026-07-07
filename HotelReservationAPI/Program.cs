@@ -1,5 +1,6 @@
 using HotelReservationAPI.Data;
 using HotelReservationAPI.Repository;
+using HotelReservationAPI.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Repository Dependency Injection
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<IRoomService, RoomService>();
 
 // Add services to the container.
 
