@@ -12,6 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Repository Dependency Injection
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 // Add services to the container.
 
