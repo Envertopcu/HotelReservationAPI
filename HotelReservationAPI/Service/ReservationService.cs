@@ -27,6 +27,20 @@ namespace HotelReservationAPI.Service
 
         public async Task AddReservationAsync(Reservation reservation)
         {
+            if (reservation.CheckOutDate <= reservation.CheckInDate)
+            {
+                throw new Exception("Çıkış tarihi, giriş tarihinden daha sonra olmalıdır!");
+            }
+
+            bool isAvailable = await _reservationRepository.IsRoomAvailableAsync(
+                reservation.RoomId,
+                reservation.CheckInDate,
+                reservation.CheckOutDate);
+
+            if (!isAvailable)
+            {
+                throw new Exception("Seçtiğiniz tarihlerde bu oda maalesef doludur.");
+            }
 
             await _reservationRepository.AddAsync(reservation);
         }

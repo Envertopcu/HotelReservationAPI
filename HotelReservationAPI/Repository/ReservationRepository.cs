@@ -55,5 +55,18 @@ namespace HotelReservationAPI.Repository
             }
         }
 
+        public async Task<bool> IsRoomAvailableAsync(int roomId, DateTime checkIn, DateTime checkOut)
+        {
+            bool isConflict = await _context.Reservations.AnyAsync(r =>
+                r.RoomId == roomId && 
+                (
+                    (checkIn >= r.CheckInDate && checkIn < r.CheckOutDate) ||
+                    (checkOut > r.CheckInDate && checkOut <= r.CheckOutDate) ||
+                    (checkIn <= r.CheckInDate && checkOut >= r.CheckOutDate)
+                )
+            );
+            return !isConflict;
+        }
+
     }
 }

@@ -36,9 +36,16 @@ namespace HotelReservationAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateReservation(Reservation reservation)
         {
+            try
+            {
+                await _reservationService.AddReservationAsync(reservation);
 
-            await _reservationService.AddReservationAsync(reservation);
-            return CreatedAtAction(nameof(GetReservation), new { id = reservation.Id }, reservation);
+                return CreatedAtAction(nameof(GetReservation), new { id = reservation.Id }, reservation);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
