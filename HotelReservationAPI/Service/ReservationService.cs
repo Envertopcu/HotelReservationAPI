@@ -9,10 +9,12 @@ namespace HotelReservationAPI.Service
     {
 
         private readonly IReservationRepository _reservationRepository;
+        private readonly IRoomRepository _roomRepository;
 
-        public ReservationService(IReservationRepository reservationRepository)
+        public ReservationService(IReservationRepository reservationRepository, IRoomRepository roomRepository)
         {
             _reservationRepository = reservationRepository;
+            _roomRepository = roomRepository;
         }
 
         public async Task<IEnumerable<Reservation>> GetAllReservationsAsync()
@@ -41,6 +43,21 @@ namespace HotelReservationAPI.Service
             {
                 throw new Exception("Seçtiğiniz tarihlerde bu oda maalesef doludur.");
             }
+
+            var room = await _roomRepository.GetByIdAsync(reservation.RoomId);
+            if (room == null)
+            {
+                throw new Exception("Böyle bir oda sistemde bulunamadı!");
+            }
+
+            int nights = (reservation.CheckOutDate - reservation.CheckInDate).Days;
+
+            if (nights == 0)
+            {
+                nights = 1;
+            }
+
+            reservation.TotalPrice = nights * room.PricePerNight;
 
             await _reservationRepository.AddAsync(reservation);
         }
