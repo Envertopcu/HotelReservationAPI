@@ -17,9 +17,9 @@ namespace HotelReservationAPI.Service
             _roomRepository = roomRepository;
         }
 
-        public async Task<IEnumerable<Reservation>> GetAllReservationsAsync()
+        public async Task<IEnumerable<Reservation>> GetAllReservationsAsync(int pageNumber = 1, int pageSize = 10)
         {
-            return await _reservationRepository.GetAllAsync();
+            return await _reservationRepository.GetAllAsync(pageNumber, pageSize);
         }
 
         public async Task<Reservation?> GetReservationByIdAsync(int id)

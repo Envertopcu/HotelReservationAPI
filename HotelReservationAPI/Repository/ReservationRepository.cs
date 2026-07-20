@@ -16,12 +16,14 @@ namespace HotelReservationAPI.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Reservation>> GetAllAsync()
+        public async Task<IEnumerable<Reservation>> GetAllAsync(int pageNumber = 1, int pageSize = 10)
         {
 
             return await _context.Reservations
                 .Include(r => r.Room)
                 .Include(r => r.Customer)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
         }
 

@@ -6,7 +6,7 @@ namespace HotelReservationAPI.Repository
 {
     public interface IReservationRepository
     {
-        Task<IEnumerable<Reservation>> GetAllAsync();
+        Task<IEnumerable<Reservation>> GetAllAsync(int pageNumber=1, int pageSize=10);
         Task<Reservation?> GetByIdAsync(int id);
         Task AddAsync(Reservation reservation);
         Task UpdateAsync(Reservation reservation);
