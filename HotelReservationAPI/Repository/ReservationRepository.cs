@@ -16,15 +16,25 @@ namespace HotelReservationAPI.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Reservation>> GetAllAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<Reservation>> GetAllAsync(int? roomId = null, int? customerId = null, int pageNumber = 1, int pageSize = 10)
         {
+            var query = _context.Reservations
+                        .Include(r => r.Customer)
+                        .Include(r => r.Room)
+                        .AsQueryable();
+            if (roomId.HasValue)
+            {
+                query = query.Where(r => r.RoomId == roomId.Value);
+            }
 
-            return await _context.Reservations
-                .Include(r => r.Room)
-                .Include(r => r.Customer)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            if (customerId.HasValue)
+            {
+                query = query.Where(r => r.CustomerId == customerId.Value);
+            }
+
+            return await query.Skip((pageNumber - 1) * pageSize)
+                      .Take(pageSize)
+                      .ToListAsync();
         }
 
         public async Task<Reservation?> GetByIdAsync(int id)

@@ -32,11 +32,26 @@ namespace HotelReservationAPI.Controllers
             return Ok(room);
         }
 
+        [HttpGet("available")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetAvailableRooms(
+        [FromQuery] DateTime checkInDate,
+        [FromQuery] DateTime checkOutDate)
+        {
+            try
+            {
+                var availableRooms = await _roomService.GetAvailableRoomsAsync(checkInDate, checkOutDate);
+                return Ok(availableRooms);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult> CreateRoom(Room room)
         {
             await _roomService.AddRoomAsync(room);
-            // Başarıyla eklendiğinde 201 Created döner ve eklenen veriyi gösterir
             return CreatedAtAction(nameof(GetRoom), new { id = room.Id }, room);
         }
 

@@ -8,7 +8,6 @@ namespace HotelReservationAPI.Service
     {
         private readonly IRoomRepository _roomRepository;
 
-        // Dependency Injection ile Repository'i içeri alıyoruz
         public RoomService(IRoomRepository roomRepository)
         {
             _roomRepository = roomRepository;
@@ -38,7 +37,15 @@ namespace HotelReservationAPI.Service
         {
             await _roomRepository.DeleteAsync(id);
         }
+        public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime checkInDate, DateTime checkOutDate)
+        {
+            if (checkOutDate <= checkInDate)
+            {
+                throw new Exception("Çıkış tarihi, giriş tarihinden daha sonra olmalıdır!");
+            }
 
+            return await _roomRepository.GetAvailableRoomsAsync(checkInDate, checkOutDate);
+        }
 
     }
 }

@@ -40,5 +40,14 @@ namespace HotelReservationAPI.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime checkInDate, DateTime checkOutDate)
+        {
+            return await _context.Rooms
+                .Where(room => !room.Reservations.Any(res =>
+                    res.CheckInDate < checkOutDate &&
+                    res.CheckOutDate > checkInDate))
+                .ToListAsync();
+        }
     }
 }

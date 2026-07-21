@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace HotelReservationAPI.Models
 {
@@ -18,5 +19,8 @@ namespace HotelReservationAPI.Models
         [Required(ErrorMessage = "Gecelik fiyat zorunludur.")]
         [Range(0, double.MaxValue, ErrorMessage = "Geçerli bir fiyat giriniz.")]
         public decimal PricePerNight { get; set; }
+        
+        [JsonIgnore]
+        public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }

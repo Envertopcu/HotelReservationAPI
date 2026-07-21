@@ -20,10 +20,12 @@ namespace HotelReservationAPI.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetReservations(
+            [FromQuery] int? roomId,
+            [FromQuery] int? customerId,
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10)
         {
-            var reservations = await _reservationService.GetAllReservationsAsync(pageNumber, pageSize);
+            var reservations = await _reservationService.GetAllReservationsAsync(roomId, customerId, pageNumber, pageSize);
             return Ok(reservations);
         }
 
