@@ -1,5 +1,6 @@
 ﻿
 
+using HotelReservationAPI.DTOs;
 using HotelReservationAPI.Models;
 using HotelReservationAPI.Repository;
 
@@ -17,14 +18,42 @@ namespace HotelReservationAPI.Service
             _roomRepository = roomRepository;
         }
 
-        public async Task<IEnumerable<Reservation>> GetAllReservationsAsync(int? roomId = null, int? customerId = null, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<ReservationDto>> GetAllReservationsAsync(int? roomId = null, int? customerId = null, int pageNumber = 1, int pageSize = 10)
         {
-            return await _reservationRepository.GetAllAsync(roomId,customerId, pageNumber, pageSize);
+            var reservations = await _reservationRepository.GetReservationsAsync(roomId, customerId, pageNumber, pageSize);
+            var reservationDtos = reservations.Select(res => new ReservationDto
+            {
+                Id = res.Id,
+                CheckInDate = res.CheckInDate,
+                CheckOutDate = res.CheckOutDate,
+                TotalPrice = res.TotalPrice,
+
+                CustomerFullName = res.Customer != null ? $"{res.Customer.FirstName} {res.Customer.LastName}" : "Bilinmiyor",
+
+                RoomNumber = res.Room != null ? res.Room.RoomNumber : "Bilinmiyor"
+            });
+            return reservationDtos;
+
         }
 
-        public async Task<Reservation?> GetReservationByIdAsync(int id)
+        public async Task<ReservationDto?> GetReservationByIdAsync(int id)
         {
-            return await _reservationRepository.GetByIdAsync(id);
+            var res = await _reservationRepository.GetByIdAsync(id);
+
+            if (res == null)
+            {
+                return null;
+            }
+
+            return new ReservationDto
+            {
+                Id = res.Id,
+                CheckInDate = res.CheckInDate,
+                CheckOutDate = res.CheckOutDate,
+                TotalPrice = res.TotalPrice,
+                CustomerFullName = res.Customer != null ? $"{res.Customer.FirstName} {res.Customer.LastName}" : "Bilinmiyor",
+                RoomNumber = res.Room != null ? res.Room.RoomNumber : "Bilinmiyor"
+            };
         }
 
         public async Task AddReservationAsync(Reservation reservation)

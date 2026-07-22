@@ -2,6 +2,8 @@
 using HotelReservationAPI.Models;
 using HotelReservationAPI.Service;
 using Microsoft.AspNetCore.Mvc;
+using HotelReservationAPI.DTOs;
+
 
 namespace HotelReservationAPI.Controllers
 {
@@ -33,7 +35,7 @@ namespace HotelReservationAPI.Controllers
         }
 
         [HttpGet("available")]
-        public async Task<ActionResult<IEnumerable<Room>>> GetAvailableRooms(
+        public async Task<ActionResult<IEnumerable<RoomDto>>> GetAvailableRooms(
         [FromQuery] DateTime checkInDate,
         [FromQuery] DateTime checkOutDate)
         {

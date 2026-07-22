@@ -1,5 +1,6 @@
 ﻿
 using HotelReservationAPI.Models;
+using HotelReservationAPI.DTOs;
 
 namespace HotelReservationAPI.Service
 {
@@ -11,7 +12,7 @@ namespace HotelReservationAPI.Service
         Task AddRoomAsync(Room room);
         Task UpdateRoomAsync(Room room);
         Task DeleteRoomAsync(int id);
-        Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime checkInDate, DateTime checkOutDate);
+        Task<IEnumerable<RoomDto>> GetAvailableRoomsAsync(DateTime checkInDate, DateTime checkOutDate);
 
     }
 }

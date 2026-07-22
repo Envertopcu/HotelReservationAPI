@@ -1,4 +1,5 @@
 ﻿
+using HotelReservationAPI.DTOs;
 using HotelReservationAPI.Models;
 using HotelReservationAPI.Repository;
 
@@ -37,14 +38,24 @@ namespace HotelReservationAPI.Service
         {
             await _roomRepository.DeleteAsync(id);
         }
-        public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime checkInDate, DateTime checkOutDate)
+        public async Task<IEnumerable<RoomDto>> GetAvailableRoomsAsync(DateTime checkInDate, DateTime checkOutDate)
         {
             if (checkOutDate <= checkInDate)
             {
                 throw new Exception("Çıkış tarihi, giriş tarihinden daha sonra olmalıdır!");
             }
+            
+            var rooms = await _roomRepository.GetAvailableRoomsAsync(checkInDate, checkOutDate);
 
-            return await _roomRepository.GetAvailableRoomsAsync(checkInDate, checkOutDate);
+            var roomDtos = rooms.Select(room => new RoomDto
+            {
+                Id = room.Id,
+                RoomNumber = room.RoomNumber,
+                Capacity = room.Capacity,
+                PricePerNight = room.PricePerNight
+            });
+
+            return roomDtos;
         }
 
     }

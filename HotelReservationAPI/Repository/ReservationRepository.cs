@@ -16,7 +16,7 @@ namespace HotelReservationAPI.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Reservation>> GetAllAsync(int? roomId = null, int? customerId = null, int pageNumber = 1, int pageSize = 10)
+        public async Task<IEnumerable<Reservation>> GetReservationsAsync(int? roomId = null, int? customerId = null, int pageNumber = 1, int pageSize = 10)
         {
             var query = _context.Reservations
                         .Include(r => r.Customer)

@@ -20,7 +20,6 @@ namespace HotelReservationAPI.Models
         [Range(0, double.MaxValue, ErrorMessage = "Geçerli bir fiyat giriniz.")]
         public decimal PricePerNight { get; set; }
         
-        [JsonIgnore]
         public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }
