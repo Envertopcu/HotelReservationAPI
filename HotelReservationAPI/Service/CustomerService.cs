@@ -32,7 +32,18 @@ namespace HotelReservationAPI.Service
 
         public async Task UpdateCustomerAsync(Customer customer)
         {
-            await _customerRepository.UpdateAsync(customer);
+            var existingCustomer = await _customerRepository.GetByIdAsync(customer.Id);
+            if (existingCustomer is null)
+            {
+                throw new KeyNotFoundException("Müşteri bulunamadı.");
+            }
+
+            existingCustomer.FirstName = customer.FirstName;
+            existingCustomer.LastName = customer.LastName;
+            existingCustomer.Email = customer.Email;
+            existingCustomer.PhoneNumber = customer.PhoneNumber;
+
+            await _customerRepository.UpdateAsync(existingCustomer);
         }
 
         public async Task DeleteCustomerAsync(int id)

@@ -32,9 +32,11 @@ namespace HotelReservationAPI.Repository
                 query = query.Where(r => r.CustomerId == customerId.Value);
             }
 
-            return await query.Skip((pageNumber - 1) * pageSize)
-                      .Take(pageSize)
-                      .ToListAsync();
+            return await query
+            .OrderBy(r => r.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
         }
 
         public async Task<Reservation?> GetByIdAsync(int id)
@@ -67,17 +69,20 @@ namespace HotelReservationAPI.Repository
             }
         }
 
-        public async Task<bool> IsRoomAvailableAsync(int roomId, DateTime checkIn, DateTime checkOut)
+        public async Task<bool> IsRoomAvailableAsync(int roomId, DateTime checkIn, DateTime checkOut, int? excludedReservationId = null)
         {
-            bool isConflict = await _context.Reservations.AnyAsync(r =>
-                r.RoomId == roomId && 
-                (
-                    (checkIn >= r.CheckInDate && checkIn < r.CheckOutDate) ||
-                    (checkOut > r.CheckInDate && checkOut <= r.CheckOutDate) ||
-                    (checkIn <= r.CheckInDate && checkOut >= r.CheckOutDate)
-                )
-            );
-            return !isConflict;
+            var query = _context.Reservations.Where(r =>
+            r.RoomId == roomId &&
+            r.CheckInDate < checkOut &&
+            r.CheckOutDate > checkIn);
+
+            if (excludedReservationId.HasValue)
+            {
+                query = query.Where(r => r.Id != excludedReservationId.Value);
+            }
+
+            return !await query.AnyAsync();
+
         }
 
     }

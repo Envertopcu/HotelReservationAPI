@@ -4,6 +4,8 @@ using HotelReservationAPI.Models;
 using HotelReservationAPI.Service;
 using Microsoft.AspNetCore.Mvc;
 using HotelReservationAPI.DTOs;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace HotelReservationAPI.Controllers
 {
@@ -32,9 +34,9 @@ namespace HotelReservationAPI.Controllers
 
                 return Ok(reservations);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return StatusCode(500, $"Rezervasyonlar getirilirken sunucu tarafında bir hata oluştu: {ex.Message}");
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -63,6 +65,11 @@ namespace HotelReservationAPI.Controllers
 
                 return Ok("Rezervasyon başarıyla oluşturuldu.");
             }
+            catch (DbUpdateException ex) when (ex.InnerException is PostgresException
+                { SqlState: PostgresErrorCodes.ExclusionViolation })
+            {
+                return Conflict(new { Message = "Bu oda seçilen tarihlerde dolu." });
+            }
             catch (Exception ex)
             {
                 return BadRequest(new { Message = ex.Message });
@@ -70,11 +77,36 @@ namespace HotelReservationAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateReservation(int id, Reservation reservation)
+        public async Task<ActionResult> UpdateReservation(int id, UpdateReservationDto updateDto)
         {
-            if (id != reservation.Id) return BadRequest();
-            await _reservationService.UpdateReservationAsync(reservation);
-            return NoContent();
+            try
+            {
+                var reservation = new Reservation
+                {
+                    Id = id,
+                    CustomerId = updateDto.CustomerId,
+                    RoomId = updateDto.RoomId,
+                    CheckInDate = updateDto.CheckInDate,
+                    CheckOutDate = updateDto.CheckOutDate
+                };
+
+                await _reservationService.UpdateReservationAsync(reservation);
+
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is PostgresException
+                { SqlState: PostgresErrorCodes.ExclusionViolation })
+            {
+                return Conflict(new { Message = "Bu oda seçilen tarihlerde dolu." });
+            }
         }
 
         [HttpDelete("{id}")]

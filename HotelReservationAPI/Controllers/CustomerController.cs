@@ -55,8 +55,15 @@ namespace HotelReservationAPI.Controllers
                 return BadRequest("Geçersiz e-posta formatı.");
             }
 
-            await _customerService.UpdateCustomerAsync(customer);
-            return NoContent();
+            try
+            {
+                await _customerService.UpdateCustomerAsync(customer);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]

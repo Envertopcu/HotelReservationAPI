@@ -31,7 +31,17 @@ namespace HotelReservationAPI.Service
 
         public async Task UpdateRoomAsync(Room room)
         {
-            await _roomRepository.UpdateAsync(room);
+            var existingRoom = await _roomRepository.GetByIdAsync(room.Id);
+            if (existingRoom is null)
+            {
+                throw new KeyNotFoundException("Oda bulunamadı.");
+            }
+
+            existingRoom.RoomNumber = room.RoomNumber;
+            existingRoom.Capacity = room.Capacity;
+            existingRoom.PricePerNight = room.PricePerNight;
+
+            await _roomRepository.UpdateAsync(existingRoom);
         }
 
         public async Task DeleteRoomAsync(int id)

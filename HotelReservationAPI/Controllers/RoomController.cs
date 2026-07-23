@@ -61,8 +61,15 @@ namespace HotelReservationAPI.Controllers
         public async Task<ActionResult> UpdateRoom(int id, Room room)
         {
             if (id != room.Id) return BadRequest();
-            await _roomService.UpdateRoomAsync(room);
-            return NoContent();
+            try
+            {
+                await _roomService.UpdateRoomAsync(room);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]

@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+
+using System.ComponentModel.DataAnnotations;
 
 namespace HotelReservationAPI.DTOs
 {
-    public class CreateReservationDto : IValidatableObject
+    public class UpdateReservationDto : IValidatableObject
     {
         [Range(1, int.MaxValue)]
         public int CustomerId { get; set; }
